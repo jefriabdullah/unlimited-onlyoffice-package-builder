@@ -154,7 +154,7 @@ build_oo_binaries() {
   _TAG_SUFFIX=$4 # -btactic
   _UNLIMITED_ORGANIZATION=$5 # btactic-oo
 
-  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
+  _GIT_CLONE_BRANCH="v${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
 
   git clone \
     --depth=1 \
