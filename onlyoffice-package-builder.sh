@@ -116,7 +116,6 @@ fi
 
 build_oo_binaries() {
 
-  _QT_BUILD_DIR=build_tools/tools/linux/qt_build
   _OUT_FOLDER=$1 # out
   _PRODUCT_VERSION=$2 # 7.4.1
   _BUILD_NUMBER=$3 # 36
@@ -124,12 +123,12 @@ build_oo_binaries() {
   _GIT_CLONE_BRANCH="v${_PRODUCT_VERSION}.${_BUILD_NUMBER}"
 
   git clone https://github.com/jefriabdullah/build_tools.git build_tools
+
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
-  mkdir -p ${_QT_BUILD_DIR}
   docker build --tag onlyoffice-document-editors-builder .
-  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_QT_BUILD_DIR} -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py server --branch='"${_GIT_CLONE_BRANCH}"
+  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py server --branch='"${_GIT_CLONE_BRANCH}"
   cd ..
 
 }
