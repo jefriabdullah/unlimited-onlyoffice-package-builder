@@ -156,11 +156,7 @@ build_oo_binaries() {
 
   _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
 
-  git clone \
-   # --depth=1 \
-   # --recursive \
-   # --branch ${_GIT_CLONE_BRANCH} \
-    https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git
+  git clone https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git build_tools
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
