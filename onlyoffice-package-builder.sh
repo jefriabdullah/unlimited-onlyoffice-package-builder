@@ -26,12 +26,12 @@ cat <<EOF
   Copyright BTACTIC, SCCL
   Licensed under the GNU PUBLIC LICENSE 3.0
 
-  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER --unlimited-organization=ORGANIZATION --tag-suffix=-TAG_SUFFIX --debian-package-suffix=-DEBIAN_PACKAGE_SUFFIX
-  Example: $0 --product-version=7.4.1 --build-number=36 --unlimited-organization=btactic-oo --tag-suffix=-btactic --debian-package-suffix=-btactic
+  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER 
+  Example: $0 --product-version=7.4.1 --build-number=36 
 
   For Github actions you might want to either build only binaries or build only deb so that it's easier to prune containers
-  Example: $0 --product-version=7.4.1 --build-number=36 --unlimited-organization=btactic-oo --tag-suffix=-btactic --debian-package-suffix=-btactic --binaries-only
-  Example: $0 --product-version=7.4.1 --build-number=36 --unlimited-organization=btactic-oo --tag-suffix=-btactic --debian-package-suffix=-btactic --deb-only
+  Example: $0 --product-version=7.4.1 --build-number=36  --binaries-only
+  Example: $0 --product-version=7.4.1 --build-number=36  --deb-only
 
 EOF
 
@@ -53,14 +53,8 @@ for option in "$@"; do
     --build-number=*)
       BUILD_NUMBER=`echo "$option" | sed 's/--build-number=//'`
     ;;
-    --unlimited-organization=*)
-      UNLIMITED_ORGANIZATION=`echo "$option" | sed 's/--unlimited-organization=//'`
-    ;;
     --tag-suffix=*)
       TAG_SUFFIX=`echo "$option" | sed 's/--tag-suffix=//'`
-    ;;
-    --debian-package-suffix=*)
-      DEBIAN_PACKAGE_SUFFIX=`echo "$option" | sed 's/--debian-package-suffix=//'`
     ;;
     --binaries-only)
       BINARIES_ONLY="true"
@@ -102,32 +96,6 @@ EOF
     exit 1
 fi
 
-if [ "x${UNLIMITED_ORGANIZATION}" == "x" ] ; then
-    cat << EOF
-    --unlimited-organization option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
-
-if [ "x${TAG_SUFFIX}" == "x" ] ; then
-    cat << EOF
-    --tag-suffix option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
-
-if [ "x${DEBIAN_PACKAGE_SUFFIX}" == "x" ] ; then
-    cat << EOF
-    --debian-package-suffix option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
 
 PRUNE_DOCKER_CONTAINERS_ACTION="false"
 if [ "x${PRUNE_DOCKER_CONTAINERS}" != "x" ] ; then
@@ -151,23 +119,22 @@ build_oo_binaries() {
   _OUT_FOLDER=$1 # out
   _PRODUCT_VERSION=$2 # 7.4.1
   _BUILD_NUMBER=$3 # 36
-  _TAG_SUFFIX=$4 # -btactic
-  _UNLIMITED_ORGANIZATION=$5 # btactic-oo
 
-  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
 
-  git clone https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git build_tools
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}
+
+  git clone https://github.com/jefriabdullah/build_tools.git build_tools
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
   docker build --tag onlyoffice-document-editors-builder .
-  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch='"${_GIT_CLONE_BRANCH} --module=server" 
+  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch='"${_GIT_CLONE_BRANCH}" 
   cd ..
 
 }
 
 if [ "${BUILD_BINARIES}" == "true" ] ; then
-  build_oo_binaries "out" "${PRODUCT_VERSION}" "${BUILD_NUMBER}" "${TAG_SUFFIX}" "${UNLIMITED_ORGANIZATION}"
+  build_oo_binaries "out" "${PRODUCT_VERSION}" "${BUILD_NUMBER}"
   build_oo_binaries_exit_value=$?
 fi
 
@@ -184,13 +151,10 @@ if [ "${BUILD_DEB}" == "true" ] ; then
     docker run \
       --env PRODUCT_VERSION=${PRODUCT_VERSION} \
       --env BUILD_NUMBER=${BUILD_NUMBER} \
-      --env TAG_SUFFIX=${TAG_SUFFIX} \
-      --env UNLIMITED_ORGANIZATION=${UNLIMITED_ORGANIZATION} \
-      --env DEBIAN_PACKAGE_SUFFIX=${DEBIAN_PACKAGE_SUFFIX} \
       -v $(pwd):/usr/local/unlimited-onlyoffice-package-builder:ro \
       -v $(pwd):/root:rw \
       -v $(pwd)/../build_tools:/root/build_tools:ro \
-      onlyoffice-deb-builder /bin/bash -c "/usr/local/unlimited-onlyoffice-package-builder/onlyoffice-deb-builder.sh --product-version ${PRODUCT_VERSION} --build-number ${BUILD_NUMBER} --tag-suffix ${TAG_SUFFIX} --unlimited-organization ${UNLIMITED_ORGANIZATION} --debian-package-suffix ${DEBIAN_PACKAGE_SUFFIX}"
+      onlyoffice-deb-builder /bin/bash -c "/usr/local/unlimited-onlyoffice-package-builder/onlyoffice-deb-builder.sh --product-version ${PRODUCT_VERSION} --build-number ${BUILD_NUMBER}
     cd ..
   else
     echo "Binaries build failed!"

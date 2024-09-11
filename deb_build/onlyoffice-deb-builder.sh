@@ -26,8 +26,8 @@ cat <<EOF
   Copyright BTACTIC, SCCL
   Licensed under the GNU PUBLIC LICENSE 3.0
 
-  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER --unlimited-organization=ORGANIZATION --tag-suffix=-TAG_SUFFIX --debian-package-suffix=-DEBIAN_PACKAGE_SUFFIX
-  Example: $0 --product-version=7.4.1 --build-number=36 --unlimited-organization=btactic-oo --tag-suffix=-btactic --debian-package-suffix=-btactic
+  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER 
+  Example: $0 --product-version=7.4.1 --build-number=36 
 
 EOF
 
@@ -46,15 +46,6 @@ for option in "$@"; do
     ;;
     --build-number=*)
       BUILD_NUMBER=`echo "$option" | sed 's/--build-number=//'`
-    ;;
-    --unlimited-organization=*)
-      UNLIMITED_ORGANIZATION=`echo "$option" | sed 's/--unlimited-organization=//'`
-    ;;
-    --tag-suffix=*)
-      TAG_SUFFIX=`echo "$option" | sed 's/--tag-suffix=//'`
-    ;;
-    --debian-package-suffix=*)
-      DEBIAN_PACKAGE_SUFFIX=`echo "$option" | sed 's/--debian-package-suffix=//'`
     ;;
   esac
 done
@@ -78,33 +69,6 @@ EOF
     exit 1
 fi
 
-if [ "x${UNLIMITED_ORGANIZATION}" == "x" ] ; then
-    cat << EOF
-    --unlimited-organization option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
-
-if [ "x${TAG_SUFFIX}" == "x" ] ; then
-    cat << EOF
-    --tag-suffix option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
-
-if [ "x${DEBIAN_PACKAGE_SUFFIX}" == "x" ] ; then
-    cat << EOF
-    --debian-package-suffix option must be informed.
-    Aborting...
-EOF
-    usage
-    exit 1
-fi
-
 build_deb() {
 
   build_deb_pre_pwd="$(pwd)"
@@ -112,17 +76,15 @@ build_deb() {
 
   _PRODUCT_VERSION=$1 # 7.4.1
   _BUILD_NUMBER=$2 # 36
-  _TAG_SUFFIX=$3 # -btactic
-  _UNLIMITED_ORGANIZATION=$4 # btactic-oo
-  _DEBIAN_PACKAGE_SUFFIX=$5
+  _DEBIAN_PACKAGE_SUFFIX=raven
 
-  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}
 
   # TODO: These requirements should be moved to Dockerfile
   # apt install build-essential m4 npm
   # npm install -g pkg
 
-  git clone https://github.com/${_UNLIMITED_ORGANIZATION}/document-server-package.git -b ${_GIT_CLONE_BRANCH}
+  git clone https://github.com/jefriabdullah/document-server-package.git -b ${_GIT_CLONE_BRANCH}
   # Ignore DETACHED warnings
   # Workaround for installing dependencies - BEGIN
   cd ${DOCUMENT_SERVER_PACKAGE_PATH}
@@ -145,4 +107,4 @@ EOF
 
 }
 
-build_deb "${PRODUCT_VERSION}" "${BUILD_NUMBER}" "${TAG_SUFFIX}" "${UNLIMITED_ORGANIZATION}" "${DEBIAN_PACKAGE_SUFFIX}"
+build_deb "${PRODUCT_VERSION}" "${BUILD_NUMBER}" "${DEBIAN_PACKAGE_SUFFIX}"
