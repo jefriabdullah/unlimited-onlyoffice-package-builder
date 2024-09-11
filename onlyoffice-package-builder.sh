@@ -26,8 +26,8 @@ cat <<EOF
   Copyright BTACTIC, SCCL
   Licensed under the GNU PUBLIC LICENSE 3.0
 
-  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER 
-  Example: $0 --product-version=7.4.1 --build-number=36 
+  Usage: $0 --product-version=PRODUCT_VERSION --build-number=BUILD_NUMBER
+  Example: $0 --product-version=7.4.1 --build-number=36
 
   For Github actions you might want to either build only binaries or build only deb so that it's easier to prune containers
   Example: $0 --product-version=7.4.1 --build-number=36  --binaries-only
@@ -120,15 +120,14 @@ build_oo_binaries() {
   _PRODUCT_VERSION=$2 # 7.4.1
   _BUILD_NUMBER=$3 # 36
 
-
-  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}"
 
   git clone https://github.com/jefriabdullah/build_tools.git build_tools
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
   docker build --tag onlyoffice-document-editors-builder .
-  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch='"${_GIT_CLONE_BRANCH}" 
+  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch='"${_GIT_CLONE_BRANCH}"
   cd ..
 
 }
@@ -154,7 +153,7 @@ if [ "${BUILD_DEB}" == "true" ] ; then
       -v $(pwd):/usr/local/unlimited-onlyoffice-package-builder:ro \
       -v $(pwd):/root:rw \
       -v $(pwd)/../build_tools:/root/build_tools:ro \
-      onlyoffice-deb-builder /bin/bash -c "/usr/local/unlimited-onlyoffice-package-builder/onlyoffice-deb-builder.sh --product-version ${PRODUCT_VERSION} --build-number ${BUILD_NUMBER}
+      onlyoffice-deb-builder /bin/bash -c "/usr/local/unlimited-onlyoffice-package-builder/onlyoffice-deb-builder.sh --product-version ${PRODUCT_VERSION} --build-number ${BUILD_NUMBER}"
     cd ..
   else
     echo "Binaries build failed!"
@@ -162,3 +161,4 @@ if [ "${BUILD_DEB}" == "true" ] ; then
     exit 1
   fi
 fi
+

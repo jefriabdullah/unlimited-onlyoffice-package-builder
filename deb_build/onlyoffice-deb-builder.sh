@@ -78,7 +78,7 @@ build_deb() {
   _BUILD_NUMBER=$2 # 36
   _DEBIAN_PACKAGE_SUFFIX=raven
 
-  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}"
 
   # TODO: These requirements should be moved to Dockerfile
   # apt install build-essential m4 npm
