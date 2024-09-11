@@ -160,8 +160,7 @@ build_oo_binaries() {
    # --depth=1 \
    # --recursive \
    # --branch ${_GIT_CLONE_BRANCH} \
-    https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git \
-    build_tools
+    https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
