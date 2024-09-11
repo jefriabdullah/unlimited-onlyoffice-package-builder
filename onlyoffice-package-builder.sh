@@ -154,19 +154,19 @@ build_oo_binaries() {
   _TAG_SUFFIX=$4 # -btactic
   _UNLIMITED_ORGANIZATION=$5 # btactic-oo
 
-  _GIT_CLONE_BRANCH="v${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
 
   git clone \
-    --depth=1 \
-    --recursive \
-    --branch ${_GIT_CLONE_BRANCH} \
+   # --depth=1 \
+   # --recursive \
+   # --branch ${_GIT_CLONE_BRANCH} \
     https://github.com/${_UNLIMITED_ORGANIZATION}/build_tools.git \
     build_tools
   # Ignore detached head warning
   cd build_tools
   mkdir ${_OUT_FOLDER}
   docker build --tag onlyoffice-document-editors-builder .
-  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch=tags/'"${_GIT_CLONE_BRANCH}"
+  docker run -e PRODUCT_VERSION=${_PRODUCT_VERSION} -e BUILD_NUMBER=${_BUILD_NUMBER} -e NODE_ENV='production' -v $(pwd)/${_OUT_FOLDER}:/build_tools/out onlyoffice-document-editors-builder /bin/bash -c 'cd tools/linux && python3 ./automate.py --branch='"${_GIT_CLONE_BRANCH} --module=server" 
   cd ..
 
 }

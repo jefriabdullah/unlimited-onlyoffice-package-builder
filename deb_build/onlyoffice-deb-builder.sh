@@ -116,7 +116,7 @@ build_deb() {
   _UNLIMITED_ORGANIZATION=$4 # btactic-oo
   _DEBIAN_PACKAGE_SUFFIX=$5
 
-  _GIT_CLONE_BRANCH="$v{_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
+  _GIT_CLONE_BRANCH="${_PRODUCT_VERSION}.${_BUILD_NUMBER}${_TAG_SUFFIX}"
 
   # TODO: These requirements should be moved to Dockerfile
   # apt install build-essential m4 npm
